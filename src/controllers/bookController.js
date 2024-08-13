@@ -1,4 +1,4 @@
-import Book from "../models/Book.js";
+import book from "../models/Book.js";
 
 class BookController {
 
@@ -6,7 +6,7 @@ class BookController {
         try {
           // controller calls model book through method book.find({})
           console.log("getBooks called");
-          const bookList = await Book.find({});
+          const bookList = await book.find({});
           res.status(200).json(bookList);
         } catch (error) {
           res
@@ -17,7 +17,7 @@ class BookController {
 
     static async addBook(req, res) {
         try {
-          const newBook = await Book.create(req.body);
+          const newBook = await book.create(req.body);
           res.status(201).json({ message: "Book added successfully", book: newBook });
         } catch (error) {
           res
@@ -30,7 +30,7 @@ class BookController {
       try {
         const id = req.params.id;
         console.log("getBooks called");
-        const bookFound = await Book.findById(id);
+        const bookFound = await book.findById(id);
         res.status(200).json(bookFound);
       } catch (error) {
         res
@@ -43,8 +43,8 @@ class BookController {
       try {
         const id = req.params.id;
         console.log(req.body);
-        await Book.findByIdAndUpdate(id, req.body);
-        const bookFound = await Book.findById(id);
+        await book.findByIdAndUpdate(id, req.body);
+        const bookFound = await book.findById(id);
         res.status(200).json({ message: "Book updated successfully", book: bookFound });
       } catch (error) {
         res
@@ -56,7 +56,7 @@ class BookController {
     static async deleteBookById(req, res) {
       try {
         const id = req.params.id;
-        const bookFound = await Book.findByIdAndDelete(id);
+        const bookFound = await book.findByIdAndDelete(id);
         res.status(200).json({ message: "Book deleted successfully", book: bookFound });
       }
       catch (error) {
