@@ -1,11 +1,10 @@
 import book from "../models/Book.js";
+import { author } from "../models/Author.js";
 
 class BookController {
 
     static async getBooks(req, res) {
         try {
-          // controller calls model book through method book.find({})
-          console.log("getBooks called");
           const bookList = await book.find({});
           res.status(200).json(bookList);
         } catch (error) {
@@ -16,9 +15,12 @@ class BookController {
     }
 
     static async addBook(req, res) {
-        try {
-          const newBook = await book.create(req.body);
-          res.status(201).json({ message: "Book added successfully", book: newBook });
+      const newBook = req.body;  
+      try {
+        const authorFound = await author.findById(newBook.author);
+        const newBookFull = { ...newBook, author: { ...authorFound._doc} };  
+        const createdBook = await book.create(newBookFull);
+          res.status(201).json({ message: "Book added successfully", book: createdBook });
         } catch (error) {
           res
             .status(500)
@@ -27,9 +29,8 @@ class BookController {
     }
 
     static async getBookById(req, res) {
+      const id = req.params.id;
       try {
-        const id = req.params.id;
-        console.log("getBooks called");
         const bookFound = await book.findById(id);
         res.status(200).json(bookFound);
       } catch (error) {
@@ -40,9 +41,16 @@ class BookController {
     }
 
     static async updateBookById(req, res) {
+      const id = req.params.id;
+      const updatedBook = req.body;
       try {
-        const id = req.params.id;
-        console.log(req.body);
+        if (updatedBook.author) {
+          const authorFound = await author.findById(updatedBook.author);
+          if (!authorFound) {
+            return res.status(404).json({ message: "Author not found" });
+          }
+          updatedBook.author = { ...authorFound._doc };
+        }
         await book.findByIdAndUpdate(id, req.body);
         const bookFound = await book.findById(id);
         res.status(200).json({ message: "Book updated successfully", book: bookFound });
@@ -63,6 +71,18 @@ class BookController {
         res
           .status(500)
           .json({ message: `${error.message} - failed to delete book with id ${id}.` });
+      }
+    }
+
+    static async getBooksByPublisher(req, res) {
+      const publisher = req.query.publisher;
+      try {
+        const booksFound = await book.find({ publisher: publisher });
+        res.status(200).json(booksFound);
+      } catch (error) {
+        res
+          .status(500)
+          .json({ message: `${error.message} - failed to get books with publisher ${publisher}.` });
       }
     }
 

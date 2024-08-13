@@ -27,7 +27,7 @@ class AuthorController {
     static async getAuthorById(req, res) {
       try {
         const id = req.params.id;
-        const AuthorFound = await Author.findById(id);
+        const AuthorFound = await author.findById(id);
         res.status(200).json(AuthorFound);
       } catch (error) {
         res
@@ -40,8 +40,8 @@ class AuthorController {
       try {
         const id = req.params.id;
         console.log(req.body);
-        await Author.findByIdAndUpdate(id, req.body);
-        const AuthorFound = await Author.findById(id);
+        await author.findByIdAndUpdate(id, req.body);
+        const AuthorFound = await author.findById(id);
         res.status(200).json({ message: "Author updated successfully", Author: AuthorFound });
       } catch (error) {
         res
@@ -53,7 +53,7 @@ class AuthorController {
     static async deleteAuthorById(req, res) {
       try {
         const id = req.params.id;
-        const AuthorFound = await Author.findByIdAndDelete(id);
+        const AuthorFound = await author.findByIdAndDelete(id);
         res.status(200).json({ message: "Author deleted successfully", Author: AuthorFound });
       }
       catch (error) {
